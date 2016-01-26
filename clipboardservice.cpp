@@ -15,7 +15,7 @@ void ClipboardService::updateClipboard(TcpPackage type, QByteArray &data)
         } else if(type == TcpPackage::PNG){
             clipboard->setImage(*fromByteArray(data));
         } else {
-            throw "Unknown MINE-type";
+            throw "Unknown MIME-type";
         }
 }
 
@@ -25,6 +25,7 @@ void ClipboardService::getClipboardData()
     QMimeData const * data = clipboard->mimeData();
     TcpPackage packageType;
     QByteArray temp;
+
     if(data->hasText()){
         packageType = TcpPackage::TXT;
         QString text = data->text();

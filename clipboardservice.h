@@ -29,15 +29,15 @@ public:
     ~ClipboardService();
 
 signals:
-    void clipboardChanged(TcpPackage type, QByteArray & data);
-    void hasUrls(QList<QUrl>);
+    void clipboardChanged(TcpPackage type, QByteArray & data); /*!< is emmited when clipboard changes add contains bytedata*/
+    void hasUrls(QList<QUrl>); /*!< is emmited when clipboard changes add contains file list or directory*/
 
 public slots:
-    void updateClipboard(TcpPackage type, QByteArray & data);
-    void getClipboardData();
+    void updateClipboard(TcpPackage type, QByteArray & data); /*!< updates clipboard*/
+    void getClipboardData(); /*!< get clipboard content */
 private:
-    QByteArray * toByteArray(QImage&);
-    QImage * fromByteArray(QByteArray&);
+    QByteArray * toByteArray(QImage&); /*!< converts QImage to QByteArray*/
+    QImage * fromByteArray(QByteArray&); /*!< converts QByteArray to QImage*/
 };
 
 #endif // CLIPBOARDSERVICE_H
