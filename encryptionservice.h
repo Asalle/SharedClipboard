@@ -14,22 +14,29 @@
 #include "modes.h"
 #include "secblock.h"
 
+//! A class, that encrypts and decrypts sharedclipboard packages
+//! Crypto++ was taken as a third-party lib, statically binded
+//! Sources of Crypto++ are in cryptopp folder
+//! AES cfb was taken as default encryption
+
 class EncryptionService
 {
-    QString key;
-    CryptoPP::AutoSeededRandomPool rnd;
-    byte iv[CryptoPP::AES::BLOCKSIZE];
-    CryptoPP::SecByteBlock keyblock;
+    QString key; /*!< The given key (password of the room)*/
+    CryptoPP::AutoSeededRandomPool rnd; /*!< the randomizer, generates random initialization vectors*/
+    byte iv[CryptoPP::AES::BLOCKSIZE]; /*!< default holder for initialization vector*/
+    CryptoPP::SecByteBlock keyblock; /*!< processed key to work with */
 public:
     EncryptionService(QString&);
-    QByteArray & encode(QByteArray&);
-    QByteArray & decode(QByteArray&);
+    QByteArray & encode(QByteArray&); /*!< encodes bytearray*/
+    QByteArray & decode(QByteArray&); /*!< decyphers bytearray*/
 
-    QByteArray encodeFile(QString &, SharedFile & sf);
-    QByteArray decodeFile();
+    QByteArray encodeFile(QString &, SharedFile & sf); /*!< encodes file*/
+    QByteArray decodeFile(); /*!< decyphers file*/
 };
 
 #endif // ENCODER_H
+
+//here you got some Bill Cypher
 
 //                                  @B@B@
 //                                  @@B@B
