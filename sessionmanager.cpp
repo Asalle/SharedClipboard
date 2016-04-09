@@ -101,7 +101,7 @@ void SessionManager::startSession(QSharedPointer<RoomService> &roomService,
     roomChoose->show();
 
     dlg->show();
-    delete dlg;
-    delete roomChoose;
+//    delete dlg;
+//    delete roomChoose;
 }
 

@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
        return 0;
    } else if(SessionManager::sessionInterrupted()){
        return app.exec();
-   }else{
+   } else{
         sessionManager = QSharedPointer<SessionManager>(SessionManager::getInstance());
         sessionManager->startSession(roomService,
                                      udpService,

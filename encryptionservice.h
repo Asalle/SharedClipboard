@@ -21,10 +21,16 @@
 
 class EncryptionService
 {
-    QString key; /*!< The given key (password of the room)*/
+    //QString keyhash; /*!< The given key's hash (password of the room)*/
     CryptoPP::AutoSeededRandomPool rnd; /*!< the randomizer, generates random initialization vectors*/
     byte iv[CryptoPP::AES::BLOCKSIZE]; /*!< default holder for initialization vector*/
-    CryptoPP::SecByteBlock keyblock; /*!< processed key to work with */
+    CryptoPP::SecByteBlock keyblockhash; /*!< processed key's hash to work with */
+
+    CryptoPP::SecByteBlock randomkeyblock;
+    byte randomKeyBlockSalt[CryptoPP::AES::BLOCKSIZE];
+
+
+    CryptoPP::SecByteBlock const getKey();
 public:
     EncryptionService(QString&);
     QByteArray & encode(QByteArray&); /*!< encodes bytearray*/
@@ -36,7 +42,7 @@ public:
 
 #endif // ENCODER_H
 
-//here you got some Bill Cypher
+// here you got some Bill Cypher
 
 //                                  @B@B@
 //                                  @@B@B

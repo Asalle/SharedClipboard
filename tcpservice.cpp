@@ -5,9 +5,9 @@ TcpService::TcpService(QObject *parent) : QObject(parent)
 {
     QString key = QString("key");
     EncryptionService * enc = new EncryptionService(key);
-    QByteArray hello = "Hello there!";
-    enc->encode(hello);
-    enc->decode(hello);
+//    QByteArray hello = "Hello there!";
+//    enc->encode(hello);
+//    enc->decode(hello); wtf is this?
 }
 
 void TcpService::createServer()
@@ -37,7 +37,7 @@ void TcpService::send(TcpPackage type, QByteArray & data_raw)
     out.writeRawData(data_raw.constData(), data_raw.size());
     for(auto socket : roomSockets){
         if(socket->write(sendarray) < sendarray.size()){
-            throw 22;
+            throw 22; // ###
         }
     }
 

@@ -10,18 +10,24 @@ ClipboardService::~ClipboardService(){}
 
 void ClipboardService::updateClipboard(TcpPackage type, QByteArray &data)
 {
-        if(type == TcpPackage::TXT){
-            clipboard->setText(QString(data));
-        } else if(type == TcpPackage::PNG){
-            clipboard->setImage(*fromByteArray(data));
-        } else {
-            throw "Unknown MIME-type";
-        }
+    if(sent == true)
+    {
+        sent = false;
+        return;
+    }
+
+    if(type == TcpPackage::TXT){
+        clipboard->setText(QString(data));
+    } else if(type == TcpPackage::PNG){
+        clipboard->setImage(*fromByteArray(data));
+    } else {
+        throw "Unknown MIME-type";
+    }
+    sent = true;
 }
 
 void ClipboardService::getClipboardData()
 {
-    sent = true;
     QMimeData const * data = clipboard->mimeData();
     TcpPackage packageType;
     QByteArray temp;
