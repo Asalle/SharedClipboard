@@ -29,6 +29,7 @@ QByteArray & EncryptionService::encode(QByteArray & data)
     data.prepend((const char*)iv, CryptoPP::AES::BLOCKSIZE);
     qDebug() << "encoded with " << data;
 
+
     return data;
 }
 

@@ -17,6 +17,7 @@ public:
     ~RoomChoose();
 signals:
     void room(QString);
+    void roomChosen(QString);
 
 private slots:
     void on_buttonBox_rejected();

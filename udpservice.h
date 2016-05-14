@@ -20,7 +20,7 @@ class UdpService : public QThread
 
     QUdpSocket * socket;
     QTimer * aliveTimer;
-    QString login;
+    QString login; //wtf is login?
     QString roomName;
 public:
     explicit UdpService(QString login, QObject *parent = 0);

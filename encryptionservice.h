@@ -13,6 +13,8 @@
 
 #include "modes.h"
 #include "secblock.h"
+#include "filters.h"
+#include "cryptlib.h"
 
 //! A class, that encrypts and decrypts sharedclipboard packages
 //! Crypto++ was taken as a third-party lib, statically binded

@@ -62,45 +62,7 @@ void SessionManager::startSession(QSharedPointer<RoomService> &roomService,
                                   QSharedPointer<FileService> &fileService,
                                   QSharedPointer<EncryptionService> &encService)
 {
-    LoginPassDialog * dlg = new LoginPassDialog();
-    QObject::connect(dlg, &LoginPassDialog::credentials,
-                     [&](QString l, QString p){
-                        QString testLogin = l;
-                        QString pass = p;
 
-                        udpService = QSharedPointer<UdpService>(new UdpService(testLogin, NULL));
-
-                        QObject::connect(udpService.data(), &UdpService::newMember,
-                             roomService.data(), &RoomService::addMember);
-
-                        // start sniffing for other members over udp
-                        udpService->start();
-
-                        tcpService = QSharedPointer<TcpService>(new TcpService());
-
-                        QObject::connect(roomService.data(), &RoomService::refreshMembers,
-                                         tcpService.data(), &TcpService::setRoomMembers);
-                        tcpService->createServer();
-
-                        encService = QSharedPointer<EncryptionService>(new EncryptionService(pass));
-                        clipboardService = QSharedPointer<ClipboardService>(new ClipboardService());
-                        QObject::connect(tcpService.data(), &TcpService::gotData,
-                                         clipboardService.data(), &ClipboardService::updateClipboard);
-                        QObject::connect(clipboardService.data(), &ClipboardService::clipboardChanged,
-                                         tcpService.data(), &TcpService::send);
-                        });
-
-    roomService = QSharedPointer<RoomService>(new RoomService(NULL));
-    QList<QString> room_list = roomService->getRooms();
-    RoomChoose * roomChoose = new RoomChoose(room_list);
-    QObject::connect(roomChoose, &RoomChoose::room, [=](QString roomname){
-                            QString room = roomname;
-                            roomService->setRoom(room);
-                            udpService->setRoomName(room);
-                        });
-    roomChoose->show();
-
-    dlg->show();
 //    delete dlg;
 //    delete roomChoose;
 }

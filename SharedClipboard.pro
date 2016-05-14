@@ -13,7 +13,8 @@ SOURCES += main.cpp \
     encryptionservice.cpp \
     tcpthreadedsender.cpp \
     GUI/loginpassdialog.cpp \
-    GUI/roomchoose.cpp
+    GUI/roomchoose.cpp \
+    GUI/addroom.cpp
 
 RESOURCES +=
 
@@ -34,7 +35,8 @@ HEADERS += \
     encryptionservice.h \
     tcpthreadedsender.h \
     GUI/loginpassdialog.h \
-    GUI/roomchoose.h
+    GUI/roomchoose.h \
+    GUI/addroom.h
 
 CONFIG += c++14
 
@@ -44,7 +46,8 @@ DISTFILES +=
 
 FORMS += \
     GUI/loginpassdialog.ui \
-    GUI/roomchoose.ui
+    GUI/roomchoose.ui \
+    GUI/addroom.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/cryptopp/release/ -lcryptopp
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/cryptopp/debug/ -lcryptopp

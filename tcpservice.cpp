@@ -4,7 +4,7 @@
 TcpService::TcpService(QObject *parent) : QObject(parent)
 {
     QString key = QString("key");
-    EncryptionService * enc = new EncryptionService(key);
+    EncryptionService * enc = new EncryptionService(key); // ###
 //    QByteArray hello = "Hello there!";
 //    enc->encode(hello);
 //    enc->decode(hello); wtf is this?
