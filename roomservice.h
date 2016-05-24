@@ -34,6 +34,8 @@ public:
 
 signals:
     void refreshMembers(QList<RoomMember>);
+    void PwdAC(QString login, QString pass);
+    void PwdFailed();
 
 public slots:
     /*!< add new member to members list*/

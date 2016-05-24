@@ -23,3 +23,11 @@ void RoomChoose::on_buttonBox_accepted()
 {
     emit qvariant_cast<QString>(ui->listView->model()->data(ui->listView->currentIndex()));
 }
+
+void RoomChoose::on_bt_addRoom_clicked()
+{
+    if (addRoomDlg == nullptr){
+        addRoomDlg = new AddRoom(this);
+        addRoomDlg->show();
+    }
+}

@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QList>
 
+#include "addroom.h"
+
 namespace Ui {
 class RoomChoose;
 }
@@ -24,8 +26,13 @@ private slots:
 
     void on_buttonBox_accepted();
 
+    void on_pushButton_clicked();
+
+    void on_bt_addRoom_clicked();
+
 private:
     Ui::RoomChoose *ui;
+    AddRoom * addRoomDlg = nullptr;
 };
 
 #endif // ROOMCHOOSE_H

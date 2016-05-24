@@ -30,7 +30,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="bt_addRoom">
        <property name="text">
         <string>Add room</string>
        </property>

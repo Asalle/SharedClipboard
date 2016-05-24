@@ -23,14 +23,14 @@ int main(int argc, char *argv[])
     LoginPassDialog * checkPassDlg = new LoginPassDialog(NULL);
 
     QObject::connect(roomChoose, &RoomChoose::roomChosen,
-                     [](QString name){
+                     [&](QString name){
                         checkPassDlg->show();
                      });
 
-    QObject::connect(roomService, &RoomService::PwdAC,
+    QObject::connect(roomService.data(), &RoomService::PwdAC,
                     [&](QString l, QString p){
 
-                       udpService = QSharedPointer<UdpService>(new UdpService(testLogin, NULL));
+                       udpService = QSharedPointer<UdpService>(new UdpService(l, NULL));
 
                        QObject::connect(udpService.data(), &UdpService::newMember,
                             roomService.data(), &RoomService::addMember);
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
                                         tcpService.data(), &TcpService::setRoomMembers);
                        tcpService->createServer();
 
-                       encService = QSharedPointer<EncryptionService>(new EncryptionService(pass));
+                       encService = QSharedPointer<EncryptionService>(new EncryptionService(p));
                        clipboardService = QSharedPointer<ClipboardService>(new ClipboardService());
                        QObject::connect(tcpService.data(), &TcpService::gotData,
                                         clipboardService.data(), &ClipboardService::updateClipboard);
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
                                         tcpService.data(), &TcpService::send);
                        });
 
-    QObject::connect(roomService, &RoomService::PwdFailed,
+    QObject::connect(roomService.data(), &RoomService::PwdFailed,
                      []{
                         QMessageBox msg;
                         msg.setText("Wrong password");
