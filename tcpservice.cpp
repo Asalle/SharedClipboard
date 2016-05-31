@@ -53,6 +53,11 @@ void TcpService::setRoomMembers(QList<RoomMember> value)
     }
 }
 
+void TcpService::checkPass(QString)
+{
+
+}
+
 // Rooms Sockets
 void TcpService::addRoomMembers(QList<QHostAddress> addressList)
 {

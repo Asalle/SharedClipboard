@@ -18,33 +18,49 @@ int main(int argc, char *argv[])
     QSharedPointer<EncryptionService> encService;
 
     roomService = QSharedPointer<RoomService>(new RoomService(NULL));
+
     QList<QString> room_list = roomService->getRooms();
     RoomChoose * roomChoose = new RoomChoose(room_list);
-    LoginPassDialog * checkPassDlg = new LoginPassDialog(NULL);
-
+    LoginPassDialog * checkPassDlg = new LoginPassDialog(NULL);;
     QObject::connect(roomChoose, &RoomChoose::roomChosen,
                      [&](QString name){
                         checkPassDlg->show();
                      });
+    tcpService = QSharedPointer<TcpService>(new TcpService());
+    QObject::connect(checkPassDlg, &LoginPassDialog::credentials,
+                     roomService.data(), &RoomService::checkPass);
+    QObject::connect(roomService.data(), &RoomService::checkPassByTcp,
+                     tcpService.data(), &TcpService::checkPass);
+    udpService = QSharedPointer<UdpService>(new UdpService("testroom", NULL));
+
+    QObject::connect(udpService.data(), &UdpService::newMember,
+         roomService.data(), &RoomService::addMember);
+    QObject::connect(udpService.data(), &UdpService::newMember,
+        [&](QString name, QString room, QList<QHostAddress>){
+            roomChoose->updateRoomList(room);
+        });
+
+    // start sniffing for other members over udp
+    udpService->start();
+
+    QObject::connect(roomChoose, &RoomChoose::newRoom,
+                     udpService.data(), &UdpService::setRoomAndLogin);
+    QObject::connect(roomChoose, &RoomChoose::newRoom,
+                     roomService.data(), &RoomService::setRoomNameAndLogin);
+
+    QObject::connect(roomChoose, &RoomChoose::newPass,
+                     [&](QString pass){
+                        encService = QSharedPointer<EncryptionService>(new EncryptionService(pass));
+                     });
+//    QObject::connect(tcpService.data(), &TcpService::pwdAC,
+//                     roomService.data(), &RoomService::PwdAC);
 
     QObject::connect(roomService.data(), &RoomService::PwdAC,
-                    [&](QString l, QString p){
-
-                       udpService = QSharedPointer<UdpService>(new UdpService(l, NULL));
-
-                       QObject::connect(udpService.data(), &UdpService::newMember,
-                            roomService.data(), &RoomService::addMember);
-
-                       // start sniffing for other members over udp
-                       udpService->start();
-
-                       tcpService = QSharedPointer<TcpService>(new TcpService());
-
+                    [&](QString login, QString pass){
                        QObject::connect(roomService.data(), &RoomService::refreshMembers,
                                         tcpService.data(), &TcpService::setRoomMembers);
                        tcpService->createServer();
 
-                       encService = QSharedPointer<EncryptionService>(new EncryptionService(p));
                        clipboardService = QSharedPointer<ClipboardService>(new ClipboardService());
                        QObject::connect(tcpService.data(), &TcpService::gotData,
                                         clipboardService.data(), &ClipboardService::updateClipboard);
@@ -58,7 +74,7 @@ int main(int argc, char *argv[])
                         msg.setText("Wrong password");
                         msg.show();
                      });
-
     roomChoose->show();
+
     return app.exec();
 }

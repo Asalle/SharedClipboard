@@ -18,16 +18,16 @@ class UdpService : public QThread
 {
     Q_OBJECT
 
-    QUdpSocket * socket;
+    QUdpSocket * socket; /*!< Pointer to our UDP socket*/
     QTimer * aliveTimer;
-    QString login; //wtf is login?
+    QString login; // Our name in the room
     QString roomName;
 public:
     explicit UdpService(QString login, QObject *parent = 0);
     void iAmAlive(); // login, room, ip-address
-    void setRoomName(QString & value);
-
+    void setRoomAndLogin(QString room, QString login);
     void run() override;
+    void startAliveTimer();
 
 signals:
     void newMember(QString login, QString room, QList<QHostAddress> addrs);

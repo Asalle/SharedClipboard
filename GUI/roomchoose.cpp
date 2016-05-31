@@ -6,7 +6,7 @@ RoomChoose::RoomChoose(QList<QString>, QWidget *parent) :
     ui(new Ui::RoomChoose)
 {
     ui->setupUi(this);
-    //ui->listView->setModel();
+    listModel = new QStandardItemModel();
 }
 
 RoomChoose::~RoomChoose()
@@ -21,13 +21,27 @@ void RoomChoose::on_buttonBox_rejected()
 
 void RoomChoose::on_buttonBox_accepted()
 {
-    emit qvariant_cast<QString>(ui->listView->model()->data(ui->listView->currentIndex()));
+    emit roomChosen(qvariant_cast<QString>(ui->listView->model()->data(ui->listView->currentIndex())));
 }
 
 void RoomChoose::on_bt_addRoom_clicked()
 {
     if (addRoomDlg == nullptr){
         addRoomDlg = new AddRoom(this);
+        connect(addRoomDlg, &AddRoom::newRoom,
+                this, &RoomChoose::newRoom);
+        connect(addRoomDlg, &AddRoom::newPass, this, &RoomChoose::newPass);
         addRoomDlg->show();
     }
+}
+
+void RoomChoose::updateRoomList(QString roomName)
+{
+    //filter rooms
+    if (listModel->findItems(roomName).size()){
+        return;
+    }
+
+    listModel->appendRow(new QStandardItem(roomName));
+    ui->listView->setModel(listModel);
 }

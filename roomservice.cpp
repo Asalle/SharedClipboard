@@ -23,7 +23,6 @@ void RoomService::addMember(QString l, QString r, QList<QHostAddress> addrl)
         if(!roomsNames.contains(r)){
             roomsNames.append(r);
         }
-
         if(r != ownRoomName)
             return;
         RoomMember candidate = RoomMember(l, addrl, true, 0);
@@ -37,7 +36,7 @@ void RoomService::addMember(QString l, QString r, QList<QHostAddress> addrl)
             }
             roomMembers.append(present);
         } else {
-            roomMembers.append(RoomMember(l, addrl, true, 0));
+            roomMembers.append(RoomMember(l, addrl, true, 0));            
         }
 }
 
@@ -55,6 +54,23 @@ void RoomService::checkAlives()
 void RoomService::setRoom(QString & value)
 {
     this->ownRoomName = value;
+}
+
+void RoomService::checkPass(QString login, QString pass)
+{
+    // if we are the only one opponent
+    if (roomMembers.size() == 1){
+        emit PwdAC(login, pass);
+        return;
+    }
+
+    emit checkPassByTcp(pass);
+}
+
+void RoomService::setRoomNameAndLogin(QString room, QString login)
+{
+    this->ownLogin = login;
+    this->ownRoomName = room;
 }
 
 

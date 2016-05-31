@@ -34,7 +34,7 @@ class EncryptionService
 
     CryptoPP::SecByteBlock const getKey();
 public:
-    EncryptionService(QString&);
+    EncryptionService(QString&); // the pass
     QByteArray & encode(QByteArray&); /*!< encodes bytearray*/
     QByteArray & decode(QByteArray&); /*!< decyphers bytearray*/
 

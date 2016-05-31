@@ -20,10 +20,11 @@ void AddRoom::on_buttonBox_accepted()
             ui->pass->text() == "" ||
             ui->pass2->text() == ""
        ){
-        return;
+        ui->errorLabel->setText("Error occured");
     } else if (ui->pass->text() != ui->pass2->text()){
-        return;
+        ui->errorLabel->setText("Error occured");
     } else {
-
+        emit newRoom(ui->name->text(), ui->loginLineEdit->text());
+        emit newPass(ui->pass->text());
     }
 }

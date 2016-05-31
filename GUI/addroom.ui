@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>194</width>
-    <height>270</height>
+    <width>253</width>
+    <height>348</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Create a SharedClipboard room</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -25,6 +25,16 @@
      </item>
      <item>
       <widget class="QLineEdit" name="name"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Your login</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="loginLineEdit"/>
      </item>
      <item>
       <widget class="QLabel" name="label_2">
@@ -47,6 +57,13 @@
       <widget class="QLineEdit" name="pass2"/>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="errorLabel">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer">

@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QList>
+#include <QStandardItemModel>
 
 #include "addroom.h"
 
@@ -18,7 +19,8 @@ public:
     explicit RoomChoose(QList<QString>, QWidget *parent = 0);
     ~RoomChoose();
 signals:
-    void room(QString);
+    void newRoom(QString room, QString login);
+    void newPass(QString pass);
     void roomChosen(QString);
 
 private slots:
@@ -26,13 +28,17 @@ private slots:
 
     void on_buttonBox_accepted();
 
-    void on_pushButton_clicked();
-
     void on_bt_addRoom_clicked();
+
+public slots:
+    void updateRoomList(QString roomName);
 
 private:
     Ui::RoomChoose *ui;
     AddRoom * addRoomDlg = nullptr;
+    int count = 0; // ###
+
+    QStandardItemModel *listModel;
 };
 
 #endif // ROOMCHOOSE_H

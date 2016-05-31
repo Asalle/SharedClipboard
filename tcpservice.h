@@ -38,9 +38,13 @@ public:
     void send(TcpPackage type, QByteArray&);
 signals:
     void gotData(TcpPackage, QByteArray &);
+    void pwdAC(QString room);
+    void pwdErr(QString room);
 
 public slots:
     void setRoomMembers(QList<RoomMember>);
+    void checkPass(QString);
+
 private slots:
     void read();
     void registerConnection();

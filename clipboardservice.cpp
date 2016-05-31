@@ -17,7 +17,7 @@ void ClipboardService::updateClipboard(TcpPackage type, QByteArray &data)
     }
 
     if(type == TcpPackage::TXT){
-        clipboard->setText(QString(data));
+        clipboard->setText("Modified: "+QString(data));
     } else if(type == TcpPackage::PNG){
         clipboard->setImage(*fromByteArray(data));
     } else {

@@ -5,7 +5,6 @@ UdpService::UdpService(QString login, QObject *parent)
     this->login = login;
     aliveTimer = new QTimer(this);
     connect(aliveTimer, &QTimer::timeout, this, &UdpService::iAmAlive);
-    aliveTimer->start(SEND_ALIVE_TIMEOUT_MSEC);
 
     socket = new QUdpSocket(this);
     if(!socket->bind(UDP_PORT, QUdpSocket::ShareAddress)){
@@ -38,9 +37,11 @@ void UdpService::iAmAlive()
     socket->writeDatagram(broadcast, broadcast.size(), QHostAddress::Broadcast, UDP_PORT);
 }
 
-void UdpService::setRoomName(QString &value)
+void UdpService::setRoomAndLogin(QString room, QString login)
 {
-    this->roomName = value;
+    this->login = login;
+    this->roomName = room;
+    this->startAliveTimer();
 }
 
 void UdpService::read()
@@ -57,11 +58,13 @@ void UdpService::read()
         datagram.resize(socket->pendingDatagramSize());
         socket->readDatagram(datagram.data(), datagram.size());
         in >> lsize;
-        char * login = new char[lsize];
+        char * login = new char[lsize+1];
         in.readRawData(login, lsize);
+        login[lsize] = 0;
         in >> rsize;
-        char * roomName = new char[rsize];
+        char * roomName = new char[rsize+1];
         in.readRawData(roomName, rsize);
+        roomName[rsize] = 0;
         in >> hostAdressesCount;
         for(int i = 0; i < hostAdressesCount; ++i){
             qint32 tempaddr;
@@ -76,4 +79,9 @@ void UdpService::read()
 void UdpService::run()
 {
     this->read();
+}
+
+void UdpService::startAliveTimer()
+{
+    aliveTimer->start(SEND_ALIVE_TIMEOUT_MSEC);
 }
