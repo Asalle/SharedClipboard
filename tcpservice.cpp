@@ -3,11 +3,6 @@
 
 TcpService::TcpService(QObject *parent) : QObject(parent)
 {
-    QString key = QString("key");
-    EncryptionService * enc = new EncryptionService(key); // ###
-//    QByteArray hello = "Hello there!";
-//    enc->encode(hello);
-//    enc->decode(hello); wtf is this?
 }
 
 void TcpService::createServer()
@@ -33,6 +28,13 @@ void TcpService::send(TcpPackage type, QByteArray & data_raw)
 {
     QByteArray sendarray;
     QDataStream out(&sendarray, QIODevice::WriteOnly);
+    try {
+        data_raw = encService->encrypt(data_raw);
+    } catch (...){
+        //if the member is not in our room -- reject it
+        // if the member is in our room and we don't understand -- except
+    }
+
     out << (qint32)type << data_raw.size();
     out.writeRawData(data_raw.constData(), data_raw.size());
     for(auto socket : roomSockets){
@@ -41,6 +43,11 @@ void TcpService::send(TcpPackage type, QByteArray & data_raw)
         }
     }
 
+}
+
+void TcpService::setEncService(QSharedPointer<EncryptionService> enc)
+{
+    this->encService = enc;
 }
 
 void TcpService::setRoomMembers(QList<RoomMember> value)
@@ -103,6 +110,12 @@ void TcpService::read()
         char * bytedata = new char[sz];
         in.readRawData(bytedata, sz);
         QByteArray temp = QByteArray(bytedata, sz);
+        try {
+            temp = encService->decrypt(temp);
+        } catch(...){
+            //if the member is not in our room -- reject it
+            // if the member is in our room and we don't understand -- except
+        }
         emit gotData(packagetype, temp);
     }
 }

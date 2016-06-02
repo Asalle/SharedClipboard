@@ -24,6 +24,7 @@ class TcpService : public QObject
     QList<QTcpSocket*> roomSockets; // came over udp, to send to
     QList<QTcpSocket*> connectedSockets; // connected to my server, to receive from
     QList<QTcpSocket*> fileSockets; // to send files
+    QSharedPointer<EncryptionService> encService;
 
     void gotFiles();
 
@@ -36,6 +37,7 @@ public:
     void addRoomMembers(QList<QHostAddress>);
 
     void send(TcpPackage type, QByteArray&);
+    void setEncService(QSharedPointer<EncryptionService> enc);
 signals:
     void gotData(TcpPackage, QByteArray &);
     void pwdAC(QString room);

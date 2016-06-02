@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
     QObject::connect(roomChoose, &RoomChoose::newPass,
                      [&](QString pass){
                         encService = QSharedPointer<EncryptionService>(new EncryptionService(pass));
+                        tcpService->setEncService(encService);
                      });
 //    QObject::connect(tcpService.data(), &TcpService::pwdAC,
 //                     roomService.data(), &RoomService::PwdAC);

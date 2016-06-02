@@ -35,11 +35,11 @@ class EncryptionService
     CryptoPP::SecByteBlock const getKey();
 public:
     EncryptionService(QString&); // the pass
-    QByteArray & encode(QByteArray&); /*!< encodes bytearray*/
-    QByteArray & decode(QByteArray&); /*!< decyphers bytearray*/
+    QByteArray & encrypt(QByteArray&); /*!< encodes bytearray*/
+    QByteArray & decrypt(QByteArray&); /*!< decyphers bytearray*/
 
-    QByteArray encodeFile(QString &, SharedFile & sf); /*!< encodes file*/
-    QByteArray decodeFile(); /*!< decyphers file*/
+    QByteArray encryptFile(QString &, SharedFile & sf); /*!< encodes file*/
+    QByteArray decryptFile(); /*!< decyphers file*/
 };
 
 #endif // ENCODER_H
