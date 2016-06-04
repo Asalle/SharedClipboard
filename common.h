@@ -15,6 +15,9 @@
 // for udpService
 #define SEND_ALIVE_TIMEOUT_MSEC 500
 
+// sha3 digest size is somehow 20 :(
+#define SHA3_DIGEST_SIZE 20
+
 #include <QDateTime>
 struct SharedFile
 {

@@ -22,13 +22,24 @@ EncryptionService::EncryptionService(QString & value)
 
 QByteArray & EncryptionService::encrypt(QByteArray & data)
 {
-    rnd.GenerateBlock(iv, CryptoPP::AES::BLOCKSIZE);
-    //memset((byte*)iv, 'B', CryptoPP::AES::BLOCKSIZE);
+    // get digest while we are still clear text
+    const QByteArray digest = hash(data);
+
+    byte enciv[CryptoPP::AES::BLOCKSIZE];
+    rnd.GenerateBlock(enciv, CryptoPP::AES::BLOCKSIZE);
     CryptoPP::SecByteBlock keyblock = getKey();
-    CryptoPP::CFB_Mode<CryptoPP::AES>::Encryption cfbenc(keyblock, keyblock.size(), iv);
+    CryptoPP::CFB_Mode<CryptoPP::AES>::Encryption cfbenc(keyblock, keyblock.size(), enciv);
     cfbenc.ProcessData((byte*)data.data(), (byte*)data.data(), data.size());
-    data.prepend((const char*)iv, CryptoPP::AES::BLOCKSIZE);
-    qDebug() << "encoded with " << data;
+    qDebug() << "encoded: " << data;
+
+    //prepend digest, it's always the same size, in common.h SHA3_DIGEST_SIZE
+    data.prepend((const char*)digest.constData(), SHA3_DIGEST_SIZE);
+
+    // prepend salt
+    data.prepend((const char*)enciv, CryptoPP::AES::BLOCKSIZE);
+
+    qDebug() << "enc digest: " << digest;
+    qDebug() << "enciv" << enciv;
 
     return data;
 }
@@ -36,15 +47,37 @@ QByteArray & EncryptionService::encrypt(QByteArray & data)
 QByteArray & EncryptionService::decrypt(QByteArray & data)
 {
     QDataStream out(&data, QIODevice::ReadOnly);
-    out.readRawData((char*)iv, CryptoPP::AES::BLOCKSIZE);
 
-    // remove the read iv
+    // read and remove the iv
+    byte deciv[CryptoPP::AES::BLOCKSIZE];
+    out.readRawData((char*)deciv, CryptoPP::AES::BLOCKSIZE);
     data.remove(0, CryptoPP::AES::BLOCKSIZE);
 
+    qDebug() << "encoded " << data;
+
+    // read and remove digest
+    QByteArray digest = QByteArray(SHA3_DIGEST_SIZE, 0);
+    out.readRawData((char*)digest.data(), SHA3_DIGEST_SIZE);
+    data.remove(0, SHA3_DIGEST_SIZE);
+
     CryptoPP::SecByteBlock keyblock = getKey();
-    CryptoPP::CFB_Mode<CryptoPP::AES>::Decryption cfbdec(keyblock, keyblock.size(), iv);
+    CryptoPP::CFB_Mode<CryptoPP::AES>::Decryption cfbdec(keyblock, keyblock.size(), deciv);
     cfbdec.ProcessData((byte*)data.data(), (byte*)data.data(), data.size());
-    qDebug() << "decoded " << data;
+
+    qDebug() << "dec digest: " << digest;
+    qDebug() << "deciv" << deciv;
+    qDebug() << "decoded " << data << "\n";
+
+    if(digest != hash(data))
+       throw "It's not our message!";
 
     return data;
+}
+
+const QByteArray EncryptionService::hash(QByteArray in)
+{
+    QByteArray digest = QByteArray(CryptoPP::SHA::DIGESTSIZE, 0);
+    CryptoPP::SHA3_256().CalculateDigest((byte*)digest.data(), (const byte*)in.constData(), in.size());
+
+    return digest;
 }

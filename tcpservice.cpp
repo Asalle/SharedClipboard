@@ -107,11 +107,10 @@ void TcpService::read()
     if(packagetype == TcpPackage::TXT || packagetype == TcpPackage::PNG){
         int sz;
         in >> sz;
-        char * bytedata = new char[sz];
-        in.readRawData(bytedata, sz);
-        QByteArray temp = QByteArray(bytedata, sz);
+        QByteArray temp = QByteArray(sz, 0);
+        in.readRawData(temp.data(), sz);
         try {
-            temp = encService->decrypt(temp);
+            encService->decrypt(temp);
         } catch(...){
             //if the member is not in our room -- reject it
             // if the member is in our room and we don't understand -- except

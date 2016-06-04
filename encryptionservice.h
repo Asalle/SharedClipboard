@@ -15,6 +15,8 @@
 #include "secblock.h"
 #include "filters.h"
 #include "cryptlib.h"
+#include "sha3.h"
+#include "sha.h"
 
 //! A class, that encrypts and decrypts sharedclipboard packages
 //! Crypto++ was taken as a third-party lib, statically binded
@@ -40,6 +42,9 @@ public:
 
     QByteArray encryptFile(QString &, SharedFile & sf); /*!< encodes file*/
     QByteArray decryptFile(); /*!< decyphers file*/
+
+private:
+    const QByteArray hash(QByteArray in); // keccak aka SHA3 as latest standard
 };
 
 #endif // ENCODER_H
