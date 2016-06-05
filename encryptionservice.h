@@ -43,6 +43,8 @@ public:
     QByteArray encryptFile(QString &, SharedFile & sf); /*!< encodes file*/
     QByteArray decryptFile(); /*!< decyphers file*/
 
+    static int randomInt();
+
 private:
     const QByteArray hash(QByteArray in); // keccak aka SHA3 as latest standard
 };

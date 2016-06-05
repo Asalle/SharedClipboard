@@ -18,11 +18,29 @@
 // sha3 digest size is somehow 20 :(
 #define SHA3_DIGEST_SIZE 20
 
+// icon path
+#define ICON_PATH "GUI/images/sharedclipboard_icon.svg"
+
+// maximum file history capasity
+#define MAX_FILE_HISTORY 20
+
+
 #include <QDateTime>
-struct SharedFile
+#include <QTcpSocket>
+class SharedFile
 {
+    int shadowId;
+public:
     QString name;
     QDateTime lastChange;
+    QTcpSocket * source;
+
+    int getShadowId() const;
+    void setShadowId(int);
+
+    explicit SharedFile(QString name, QDateTime lc);
+    SharedFile(SharedFile const & other);
+    bool operator ==(SharedFile const & other);
 };
 
 #include <QHostAddress>

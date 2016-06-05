@@ -10,6 +10,8 @@
 #include <QList>
 #include <QSharedPointer>
 #include <QThread>
+#include <QFile>
+#include <QNetworkInterface>
 
 #include "tcppackages.h"
 #include "common.h"
@@ -40,12 +42,16 @@ public:
     void setEncService(QSharedPointer<EncryptionService> enc);
 signals:
     void gotData(TcpPackage, QByteArray &);
+    void gotFileNotif(QByteArray);
+    void gotFileReq(QByteArray);
     void pwdAC(QString room);
     void pwdErr(QString room);
 
 public slots:
     void setRoomMembers(QList<RoomMember>);
     void checkPass(QString);
+    void reqFile(SharedFile);
+    void sendFileChunks(QFile*, QList<int>);
 
 private slots:
     void read();

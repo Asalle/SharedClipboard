@@ -7,6 +7,9 @@ RoomChoose::RoomChoose(QList<QString>, QWidget *parent) :
 {
     ui->setupUi(this);
     listModel = new QStandardItemModel();
+    // name, last change, shadowId
+    ui->tableWidget->setColumnCount(3);
+    ui->tableWidget->setRowCount(MAX_FILE_HISTORY);
 }
 
 RoomChoose::~RoomChoose()
@@ -44,4 +47,29 @@ void RoomChoose::updateRoomList(QString roomName)
 
     listModel->appendRow(new QStandardItem(roomName));
     ui->listView->setModel(listModel);
+}
+
+void RoomChoose::updateFileTable(QList<SharedFile> files)
+{
+    for (SharedFile file : files){
+        ui->tableWidget->setItem(tableRowCount, 0, new QTableWidgetItem(file.name));
+        ui->tableWidget->setItem(tableRowCount, 1, new QTableWidgetItem(file.lastChange.toString()));
+        tableRowCount++;
+    }
+
+    // delete older rows
+    if (ui->tableWidget->rowCount() > MAX_FILE_HISTORY){
+        ui->tableWidget->removeRow(0);
+        tableRowCount--;
+    }
+}
+
+void RoomChoose::on_buttonBox_2_accepted()
+{
+    on_tableWidget_doubleClicked(ui->tableWidget->currentIndex());
+}
+
+void RoomChoose::on_tableWidget_doubleClicked(const QModelIndex &index)
+{
+    emit fileChosen(ui->tableWidget->item(index.row(), 2)->text().toInt()); // 2 ist the index of the shadow id
 }

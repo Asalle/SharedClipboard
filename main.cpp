@@ -1,14 +1,23 @@
 #include <QApplication>
 #include <QSharedPointer>
 #include <QMessageBox>
+#include <QSystemTrayIcon>
+#include <QMenu>
+#include <QAction>
 
-
+#include "common.h"
 #include "sessionmanager.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
+
+    QSystemTrayIcon trayIcon(QIcon(ICON_PATH));
+
+    trayIcon.setVisible(true);
+    trayIcon.show();
+    trayIcon.showMessage("", "You are using SharedClipboard");
 
     QSharedPointer<RoomService> roomService;
     QSharedPointer<UdpService> udpService;
@@ -21,12 +30,25 @@ int main(int argc, char *argv[])
 
     QList<QString> room_list = roomService->getRooms();
     RoomChoose * roomChoose = new RoomChoose(room_list);
+
+    QMenu * iconMenu = new QMenu();
+    QAction * openMainWindow = new QAction("Open main window", NULL);
+    QObject::connect(openMainWindow, &QAction::triggered,
+                     roomChoose, &RoomChoose::show);
+    iconMenu->addAction(openMainWindow);
+    trayIcon.setContextMenu(iconMenu);
+
     LoginPassDialog * checkPassDlg = new LoginPassDialog(NULL);;
     QObject::connect(roomChoose, &RoomChoose::roomChosen,
                      [&](QString name){
                         checkPassDlg->show();
                      });
+    QObject::connect(roomChoose, &RoomChoose::fileChosen,
+                     fileService.data(), &FileService::fileChosen);
+
     tcpService = QSharedPointer<TcpService>(new TcpService());
+    QObject::connect(fileService.data(), &FileService::getFile,
+                     tcpService.data(), &TcpService::reqFile);
     QObject::connect(checkPassDlg, &LoginPassDialog::credentials,
                      roomService.data(), &RoomService::checkPass);
     QObject::connect(roomService.data(), &RoomService::checkPassByTcp,
@@ -39,6 +61,24 @@ int main(int argc, char *argv[])
         [&](QString name, QString room, QList<QHostAddress>){
             roomChoose->updateRoomList(room);
         });
+
+    //connect FileService
+    fileService = QSharedPointer<FileService>(new FileService(NULL));
+
+    QObject::connect(tcpService.data(), &TcpService::gotFileNotif,
+                     fileService.data(), &FileService::updateFileList);
+    QObject::connect(tcpService.data(), &TcpService::gotFileReq,
+                     fileService.data(), &FileService::findFile);
+    QObject::connect(fileService.data(), &FileService::fileResp,
+                     tcpService.data(), &TcpService::sendFileChunks);
+
+    QObject::connect(fileService.data(), &FileService::fileListUpdated,
+                     roomChoose, &RoomChoose::updateFileTable);
+
+    QObject::connect(tcpService.data(), &TcpService::gotFileNotif,
+                     [&](QByteArray data){ // fix this
+                            trayIcon.showMessage("New file available", "");
+                        });
 
     // start sniffing for other members over udp
     udpService->start();

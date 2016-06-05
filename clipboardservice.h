@@ -9,7 +9,10 @@
 #include <QBuffer>
 #include <QImage>
 #include <QUrl>
+#include <QFileInfo>
+#include <QDate>
 
+#include <QDebug> // ###
 
 #include "tcppackages.h"
 

@@ -74,6 +74,11 @@ QByteArray & EncryptionService::decrypt(QByteArray & data)
     return data;
 }
 
+int EncryptionService::randomInt()
+{
+    return 42; // ###
+}
+
 const QByteArray EncryptionService::hash(QByteArray in)
 {
     QByteArray digest = QByteArray(CryptoPP::SHA::DIGESTSIZE, 0);

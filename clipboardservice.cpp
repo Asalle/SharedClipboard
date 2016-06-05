@@ -32,22 +32,34 @@ void ClipboardService::getClipboardData()
     TcpPackage packageType;
     QByteArray temp;
 
-    if(data->hasText()){
+    if(data->hasUrls()){
+        packageType = TcpPackage::FILE_NOTIF;
+        QList<QUrl> tempUrlList = data->urls();
+        QByteArray temp;
+        QDataStream out(&temp, QIODevice::WriteOnly);
+        out << tempUrlList.size();
+        for (QUrl item : tempUrlList){
+            out << item.fileName().size();
+            out.writeRawData(item.path().toUtf8().constData(), item.fileName().size());
+            out << QFileInfo(item.path()).lastModified().toMSecsSinceEpoch();
+
+            qDebug() << item.path();
+            qDebug() << QFileInfo(item.path()).lastModified().toString();
+        }
+        emit clipboardChanged(packageType, temp);
+
+    } else if(data->hasText()){
         packageType = TcpPackage::TXT;
         QString text = data->text();
         temp = QByteArray(text.toUtf8().constData(), text.size());
         emit clipboardChanged(packageType, temp);
 
-    } else if(data->hasImage()) {
+    } else if(data->hasImage()){
         packageType = TcpPackage::PNG;
         QVariant tempImageVariant = data->imageData();
         QImage image = tempImageVariant.value<QImage>();
         temp = *(toByteArray(image));
         emit clipboardChanged(packageType, temp);
-
-    } else if(data->hasUrls()) {
-        QList<QUrl> tempUrlList = data->urls();
-        emit hasUrls(tempUrlList);
 
     } else {
         throw "Unknown MIME format";

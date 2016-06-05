@@ -2,7 +2,7 @@
 #define TCPPACKAGES
 
 //! represents packages types
-enum class TcpPackage : char
+enum class TcpPackage : int
 {
     TXT, /*!< plain text*/
     PNG, /*!< png image*/

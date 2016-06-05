@@ -65,6 +65,32 @@ void TcpService::checkPass(QString)
 
 }
 
+void TcpService::reqFile(SharedFile file)
+{
+    QByteArray data;
+    QDataStream out(&data, QIODevice::WriteOnly);
+    out << file.name.size();
+    out.writeRawData(file.name.toUtf8().constData(), file.name.size());
+    out << file.lastChange.toMSecsSinceEpoch();
+    QNetworkInterface interface;
+    out << interface.allAddresses().size();
+    for (int i = 0; i < interface.allAddresses().size(); ++i){
+        out << interface.allAddresses()[i].toIPv4Address();
+    }
+
+    if (file.source->write(data) < data.size()){
+        throw "Array send error!";
+    }
+}
+
+void TcpService::sendFileChunks(QFile *subjFile, QList<int> requesters)
+{
+    if (subjFile->exists() && subjFile->isReadable()){
+        // send per chunks
+    }
+    delete subjFile;
+}
+
 // Rooms Sockets
 void TcpService::addRoomMembers(QList<QHostAddress> addressList)
 {
@@ -104,17 +130,24 @@ void TcpService::read()
     in >> pack_t;
     TcpPackage packagetype = (TcpPackage)pack_t;
 
-    if(packagetype == TcpPackage::TXT || packagetype == TcpPackage::PNG){
-        int sz;
-        in >> sz;
-        QByteArray temp = QByteArray(sz, 0);
-        in.readRawData(temp.data(), sz);
-        try {
-            encService->decrypt(temp);
-        } catch(...){
-            //if the member is not in our room -- reject it
-            // if the member is in our room and we don't understand -- except
-        }
+    int sz;
+    in >> sz;
+    QByteArray temp = QByteArray(sz, 0);
+    in.readRawData(temp.data(), sz);
+    try {
+        encService->decrypt(temp);
+    } catch(...){
+        //if the member is not in our room -- reject it
+        // if the member is in our room and we don't understand -- except
+    }
+
+    if (packagetype == TcpPackage::TXT || packagetype == TcpPackage::PNG)
         emit gotData(packagetype, temp);
+    else if (packagetype == TcpPackage::FILE_NOTIF){
+        emit gotFileNotif(temp);
+    } else if(packagetype == TcpPackage::FILE_REQ){
+        emit gotFileReq(temp);
+    } else {
+        throw "Unknow package type";
     }
 }
