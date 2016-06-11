@@ -30,7 +30,7 @@ void FileService::updateFileList(QByteArray inba)
             newFiles.append(candidateFile);
         }
 
-        delete filename;
+        //delete filename;
     }
     emit fileListUpdated(newFiles);
 }
@@ -94,6 +94,7 @@ void FileService::sendFileChunks(QFileInfo info, QList<int> requesters)
     QFile *subjFile = new QFile(info.path());
     emit fileResp(subjFile, requesters);
 }
+
 
 // SharedFile declaration
 

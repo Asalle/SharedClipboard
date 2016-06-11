@@ -7,16 +7,15 @@ SOURCES += main.cpp \
     tcpservice.cpp \
     clipboardservice.cpp \
     fileservice.cpp \
-    sessionmanager.cpp \
     udppackage.cpp \
     roomservice.cpp \
     encryptionservice.cpp \
-    tcpthreadedsender.cpp \
     GUI/loginpassdialog.cpp \
     GUI/roomchoose.cpp \
     GUI/addroom.cpp
 
-RESOURCES +=
+RESOURCES += \
+    GUI/resources.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -29,18 +28,14 @@ HEADERS += \
     clipboardservice.h \
     fileservice.h \
     common.h \
-    sessionmanager.h \
     udppackage.h \
     roomservice.h \
     encryptionservice.h \
-    tcpthreadedsender.h \
     GUI/loginpassdialog.h \
     GUI/roomchoose.h \
     GUI/addroom.h
 
 CONFIG += c++14
-
-
 
 DISTFILES +=
 

@@ -39,8 +39,8 @@ void ClipboardService::getClipboardData()
         QDataStream out(&temp, QIODevice::WriteOnly);
         out << tempUrlList.size();
         for (QUrl item : tempUrlList){
-            out << item.fileName().size();
-            out.writeRawData(item.path().toUtf8().constData(), item.fileName().size());
+            out << item.path().size();
+            out.writeRawData(item.path().toUtf8().constData(), item.path().size());
             out << QFileInfo(item.path()).lastModified().toMSecsSinceEpoch();
 
             qDebug() << item.path();

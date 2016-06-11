@@ -8,7 +8,7 @@ RoomChoose::RoomChoose(QList<QString>, QWidget *parent) :
     ui->setupUi(this);
     listModel = new QStandardItemModel();
     // name, last change, shadowId
-    ui->tableWidget->setColumnCount(3);
+    ui->tableWidget->setColumnCount(2);
     ui->tableWidget->setRowCount(MAX_FILE_HISTORY);
 }
 
