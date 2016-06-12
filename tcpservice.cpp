@@ -78,13 +78,31 @@ void TcpService::reqFile(SharedFile file)
         out << interface.allAddresses()[i].toIPv4Address();
     }
 
-    if (file.source->write(data) < data.size()){
-        throw "Array send error!";
+    data = encService->encrypt(data);
+
+    QByteArray sendarray;
+    QDataStream sendstream(&sendarray, QIODevice::WriteOnly);
+    sendstream << qint32(TcpPackage::FILE_REQ);
+    sendstream << data.size();
+    sendstream.writeRawData(data, data.size());
+
+    for (QHostAddress address : file.sources){
+        QTcpSocket * filereqsocket = new QTcpSocket();
+        connectSocket(filereqsocket, address);
+        if (filereqsocket->write(sendarray) == sendarray.size()){
+//            filereqsocket->close();
+//            delete filereqsocket;
+            break;
+        }
+        filereqsocket->close();
+        delete filereqsocket;
     }
 }
 
 void TcpService::sendFileChunks(QFile *subjFile, QList<int> requesters)
 {
+    if(subjFile == nullptr)
+        return;
     if (subjFile->exists() && subjFile->isReadable()){
         // send per chunks
     }

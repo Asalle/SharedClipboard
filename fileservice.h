@@ -22,12 +22,12 @@ public:
     QByteArray getFileChunk(qint32 start, size_t size, QString fullpath);
 signals:
     void fileListUpdated(QList<SharedFile>);
-    void getFile(SharedFile);
+    void reqFile(SharedFile);
     void fileResp(QFile*, QList<int>);
 public slots:
     //void updateFile(QByteArray chunk); // and what else?
     void updateFileList(QByteArray); /*!< when a new file becomes available, we need to update this list to stay tuned*/
-    void fileChosen(int shadowId); /*!< take the shadowid and create the sharedfile to ask for*/
+    void fileChosen(SharedFile); /*!< take the shadowid and create the sharedfile to ask for*/
     void findFile(QByteArray data);
 private:
     QList<SharedFile> availableFiles;

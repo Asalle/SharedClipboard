@@ -6,10 +6,21 @@ RoomChoose::RoomChoose(QList<QString>, QWidget *parent) :
     ui(new Ui::RoomChoose)
 {
     ui->setupUi(this);
+
     listModel = new QStandardItemModel();
-    // name, last change, shadowId
+
+    // name, last change
     ui->tableWidget->setColumnCount(2);
     ui->tableWidget->setRowCount(MAX_FILE_HISTORY);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidget->setHorizontalHeaderLabels({"File name", "File last changed"});
+
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Enter the room");
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    connect(ui->listView, &QListView::clicked,
+            [&](const QModelIndex & index){
+                ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+            });
 }
 
 RoomChoose::~RoomChoose()
@@ -24,7 +35,8 @@ void RoomChoose::on_buttonBox_rejected()
 
 void RoomChoose::on_buttonBox_accepted()
 {
-    emit roomChosen(qvariant_cast<QString>(ui->listView->model()->data(ui->listView->currentIndex())));
+    if(ui->listView->currentIndex().isValid())
+        emit roomChosen(qvariant_cast<QString>(ui->listView->model()->data(ui->listView->currentIndex())));
 }
 
 void RoomChoose::on_bt_addRoom_clicked()
@@ -33,9 +45,13 @@ void RoomChoose::on_bt_addRoom_clicked()
         addRoomDlg = new AddRoom(this);
         connect(addRoomDlg, &AddRoom::newRoom,
                 this, &RoomChoose::newRoom);
+        connect(addRoomDlg, &AddRoom::newRoom,
+                [&](QString name){
+                    ui->bt_addRoom->setEnabled(false);
+                });
         connect(addRoomDlg, &AddRoom::newPass, this, &RoomChoose::newPass);
-        addRoomDlg->show();
     }
+    addRoomDlg->show();
 }
 
 void RoomChoose::updateRoomList(QString roomName)
@@ -57,7 +73,7 @@ void RoomChoose::updateFileTable(QList<SharedFile> files)
         tableRowCount++;
     }
 
-    // delete older rows
+//     delete older rows
     if (ui->tableWidget->rowCount() > MAX_FILE_HISTORY){
         ui->tableWidget->removeRow(0);
         tableRowCount--;
@@ -71,5 +87,12 @@ void RoomChoose::on_buttonBox_2_accepted()
 
 void RoomChoose::on_tableWidget_doubleClicked(const QModelIndex &index)
 {
-    emit fileChosen(ui->tableWidget->item(index.row(), 2)->text().toInt()); // 2 ist the index of the shadow id
+    if(ui->tableWidget->item(index.row(), 1))
+    {
+        // column 0 -- name, column 3 -- last change
+        SharedFile temp(ui->tableWidget->item(index.row(), 0)->text(),
+                        QDateTime::fromString(ui->tableWidget->item(index.row(), 1)->text()));
+        emit fileChosen(temp);
+    }
 }
+

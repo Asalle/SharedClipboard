@@ -41,6 +41,12 @@ int main(int argc, char *argv[])
     QObject::connect(openMainWindow, &QAction::triggered,
                      roomChoose, &RoomChoose::show);
     iconMenu->addAction(openMainWindow);
+
+    QAction * exitSC = new QAction("Exit SharedClipboard", nullptr);
+    QObject::connect(exitSC, &QAction::triggered,
+                     [&](){ app.quit(); });
+    iconMenu->addAction(exitSC);
+
     trayIcon.setContextMenu(iconMenu);
 
     LoginPassDialog * checkPassDlg = new LoginPassDialog(NULL);;
@@ -66,7 +72,7 @@ int main(int argc, char *argv[])
 
     //connect FileService
     fileService = QSharedPointer<FileService>(new FileService(NULL));
-    QObject::connect(fileService.data(), &FileService::getFile,
+    QObject::connect(fileService.data(), &FileService::reqFile,
                      tcpService.data(), &TcpService::reqFile);
     QObject::connect(roomChoose, &RoomChoose::fileChosen,
                      fileService.data(), &FileService::fileChosen);
@@ -88,9 +94,9 @@ int main(int argc, char *argv[])
     udpService->start();
 
     QObject::connect(roomChoose, &RoomChoose::newRoom,
-                     udpService.data(), &UdpService::setRoomAndLogin);
+                     udpService.data(), &UdpService::setRoom);
     QObject::connect(roomChoose, &RoomChoose::newRoom,
-                     roomService.data(), &RoomService::setRoomNameAndLogin);
+                     roomService.data(), &RoomService::setRoom);
 
     QObject::connect(roomChoose, &RoomChoose::newPass,
                      [&](QString pass){

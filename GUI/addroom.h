@@ -15,11 +15,13 @@ public:
     explicit AddRoom(QWidget *parent = 0);
     ~AddRoom();
 signals:
-    void newRoom(QString name, QString login);
+    void newRoom(QString name);
     void newPass(QString pass);
 
 private slots:
-    void on_buttonBox_accepted();
+    void on_addbtn_clicked();
+
+    void on_cancelbtn_clicked();
 
 private:
     Ui::AddRoom *ui;

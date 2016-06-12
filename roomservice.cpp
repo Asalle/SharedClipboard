@@ -51,7 +51,7 @@ void RoomService::checkAlives()
     emit refreshMembers(this->roomMembers);
 }
 
-void RoomService::setRoom(QString & value)
+void RoomService::setRoom(QString value)
 {
     this->ownRoomName = value;
 }

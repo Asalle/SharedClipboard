@@ -11,6 +11,7 @@
 #include <QUrl>
 #include <QFileInfo>
 #include <QDate>
+#include <QNetworkInterface>
 
 #include <QDebug> // ###
 

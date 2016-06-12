@@ -34,7 +34,7 @@ class RoomService : public QObject
 public:
     explicit RoomService(QObject *parent = 0);
     QList<QString> getRooms(); /*!< get list of available rooms*/
-    void setRoom(QString&); /*!< sets my room from the room list*/
+    void setRoom(QString); /*!< sets my room from the room list*/
     QList<RoomMember> getRoomMembers() const; /*!< get list of my room members*/
 
 signals:

@@ -2,6 +2,7 @@
 #define ROOMCHOOSE_H
 
 #include <QDialog>
+#include <QListView>
 #include <QList>
 #include <QStandardItemModel>
 
@@ -20,10 +21,10 @@ public:
     explicit RoomChoose(QList<QString>, QWidget *parent = 0);
     ~RoomChoose();
 signals:
-    void newRoom(QString room, QString login);
+    void newRoom(QString room);
     void newPass(QString pass);
     void roomChosen(QString);
-    void fileChosen(int shadowId);
+    void fileChosen(SharedFile);
 
 private slots:
     void on_buttonBox_rejected();

@@ -6,25 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>283</width>
-    <height>224</height>
+    <width>313</width>
+    <height>245</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Login to a room</string>
+   <string>Login to the room</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <widget class="QLabel" name="label_3">
+    <widget class="QLabel" name="infolabel">
      <property name="text">
-      <string>Your password should be shared among</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string> room members outside the SharedClipboard</string>
+      <string>Your password should be shared among  room members outside the SharedClipboard</string>
      </property>
     </widget>
    </item>
@@ -51,7 +44,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit"/>
+      <widget class="QLineEdit" name="loginLE"/>
      </item>
     </layout>
    </item>
@@ -65,7 +58,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_2"/>
+      <widget class="QLineEdit" name="PassLE"/>
      </item>
     </layout>
    </item>

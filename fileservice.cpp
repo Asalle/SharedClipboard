@@ -24,8 +24,16 @@ void FileService::updateFileList(QByteArray inba)
         in.readRawData(filename, namesize);
         qint64 lastChanged;
         in >> lastChanged;
+        int sourceAdresses;
+        in >> sourceAdresses;
+        QList<QHostAddress> adresslist;
+        for(int i = 0; i < sourceAdresses; ++i){
+            qint32 address;
+            in >> address;
+            adresslist.append(QHostAddress(address));
+        }
         SharedFile candidateFile(QString::fromUtf8(filename, namesize),
-                                            QDateTime::fromMSecsSinceEpoch(lastChanged));
+                                            QDateTime::fromMSecsSinceEpoch(lastChanged), adresslist);
         if (insertFile(candidateFile)){
             newFiles.append(candidateFile);
         }
@@ -35,9 +43,14 @@ void FileService::updateFileList(QByteArray inba)
     emit fileListUpdated(newFiles);
 }
 
-void FileService::fileChosen(int shadowId)
+void FileService::fileChosen(SharedFile candidateFile)
 {
-
+    for(SharedFile file : availableFiles)
+    {
+        if (file == candidateFile){
+            emit reqFile(file);
+        }
+    }
 }
 
 void FileService::findFile(QByteArray data)
@@ -98,10 +111,26 @@ void FileService::sendFileChunks(QFileInfo info, QList<int> requesters)
 
 // SharedFile declaration
 
-SharedFile::SharedFile(QString name, QDateTime lc){
+QList<QHostAddress> SharedFile::getSources() const
+{
+    return sources;
+}
+
+void SharedFile::setSources(const QList<QHostAddress> &value)
+{
+    sources = value;
+}
+
+SharedFile::SharedFile(QString name, QDateTime lc, QList<QHostAddress> s){
     this->name = name;
     this->lastChange = lc;
-    this->shadowId = EncryptionService::randomInt();
+    this->sources = s;
+}
+
+SharedFile::SharedFile(QString name, QDateTime lc)
+{
+    this->name = name;
+    this->lastChange = lc;
 }
 
 bool SharedFile::operator ==(SharedFile const & other){
@@ -112,14 +141,5 @@ bool SharedFile::operator ==(SharedFile const & other){
 SharedFile::SharedFile(const SharedFile & other){
     this->name = other.name;
     this->lastChange = other.lastChange;
-    this->shadowId = other.getShadowId();
+    this->sources = other.getSources();
 }
-
-int SharedFile::getShadowId() const{
-    return this->shadowId;
-}
-
-void SharedFile::setShadowId(int id){
-    this->shadowId = id;
-}
-

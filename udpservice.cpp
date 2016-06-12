@@ -37,9 +37,8 @@ void UdpService::iAmAlive()
     socket->writeDatagram(broadcast, broadcast.size(), QHostAddress::Broadcast, UDP_PORT);
 }
 
-void UdpService::setRoomAndLogin(QString room, QString login)
+void UdpService::setRoom(QString room)
 {
-    this->login = login;
     this->roomName = room;
     this->startAliveTimer();
 }

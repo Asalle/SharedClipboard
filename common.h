@@ -29,18 +29,17 @@
 #include <QTcpSocket>
 class SharedFile
 {
-    int shadowId;
 public:
     QString name;
     QDateTime lastChange;
-    QTcpSocket * source;
+    QList<QHostAddress> sources;
 
-    int getShadowId() const;
-    void setShadowId(int);
-
-    explicit SharedFile(QString name, QDateTime lc);
+    SharedFile(QString name, QDateTime lc, QList<QHostAddress>);
+    SharedFile(QString name, QDateTime lc);
     SharedFile(SharedFile const & other);
     bool operator ==(SharedFile const & other);
+    QList<QHostAddress> getSources() const;
+    void setSources(const QList<QHostAddress> &value);
 };
 
 #include <QHostAddress>
@@ -75,4 +74,3 @@ struct RoomMember
 };
 
 #endif // PORTS_H
-
