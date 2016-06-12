@@ -89,6 +89,8 @@ int main(int argc, char *argv[])
                             //trayIcon.showMessage("New file available", "");
                             //qDebug() << "new file available";
                         });
+    QObject::connect(tcpService.data(), &TcpService::gotFileResp,
+                     fileService.data(), &FileService::updateFile);
 
     // start sniffing for other members over udp
     udpService->start();

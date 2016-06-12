@@ -24,6 +24,11 @@
 // maximum file history capasity
 #define MAX_FILE_HISTORY 20
 
+// the file dir
+#define SC_snd_dir "/home/asalle/"
+
+#define SC_rcv_dir "/home/asalle/rcv/"
+
 
 #include <QDateTime>
 #include <QTcpSocket>

@@ -29,6 +29,7 @@ public slots:
     void updateFileList(QByteArray); /*!< when a new file becomes available, we need to update this list to stay tuned*/
     void fileChosen(SharedFile); /*!< take the shadowid and create the sharedfile to ask for*/
     void findFile(QByteArray data);
+    void updateFile(QByteArray data);
 private:
     QList<SharedFile> availableFiles;
 

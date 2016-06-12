@@ -11,6 +11,7 @@
 #include <QSharedPointer>
 #include <QThread>
 #include <QFile>
+#include <QFileInfo>
 #include <QNetworkInterface>
 
 #include "tcppackages.h"
@@ -44,6 +45,7 @@ signals:
     void gotData(TcpPackage, QByteArray &);
     void gotFileNotif(QByteArray);
     void gotFileReq(QByteArray);
+    void gotFileResp(QByteArray);
     void pwdAC(QString room);
     void pwdErr(QString room);
 

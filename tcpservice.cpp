@@ -103,8 +103,37 @@ void TcpService::sendFileChunks(QFile *subjFile, QList<int> requesters)
 {
     if(subjFile == nullptr)
         return;
-    if (subjFile->exists() && subjFile->isReadable()){
-        // send per chunks
+
+    if (subjFile->exists()){
+        QByteArray data;
+        QDataStream out(&data, QIODevice::WriteOnly);
+        out << QFileInfo(*subjFile).fileName().size();
+        out.writeRawData(QFileInfo(*subjFile).fileName().toUtf8().constData(),
+                         QFileInfo(*subjFile).fileName().size());
+
+        subjFile->open(QIODevice::ReadOnly);
+        QByteArray file = subjFile->readAll();
+        out << file.size();
+        qDebug() << file.size();
+        out.writeRawData(file.constData(), file.size());
+
+        data = encService->encrypt(data);
+
+        QByteArray sendarray;
+        QDataStream sendstream(&sendarray, QIODevice::WriteOnly);
+        sendstream << qint32(TcpPackage::FILE_RESP);
+        sendstream << data.size();
+        sendstream.writeRawData(data, data.size());
+
+        for (int address : requesters){
+            QTcpSocket * filereqsocket = new QTcpSocket();
+            connectSocket(filereqsocket, QHostAddress(address));
+            if (filereqsocket->write(sendarray) == sendarray.size()){
+    //            filereqsocket->close();
+    //            delete filereqsocket;
+                break;
+            }
+        }
     }
     delete subjFile;
 }
@@ -165,6 +194,8 @@ void TcpService::read()
         emit gotFileNotif(temp);
     } else if(packagetype == TcpPackage::FILE_REQ){
         emit gotFileReq(temp);
+    } else if(packagetype == TcpPackage::FILE_RESP){
+        emit gotFileResp(temp);
     } else {
         throw "Unknow package type";
     }

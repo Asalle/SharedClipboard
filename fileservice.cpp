@@ -61,6 +61,8 @@ void FileService::findFile(QByteArray data)
     in >> namesz;
     char * fileName = new char(namesz);
     in.readRawData(fileName, namesz);
+    qint64 lastchange;
+    in >> lastchange;
     int addresslistsz;
     in >> addresslistsz;
     QList<qint32> requesters;
@@ -72,13 +74,42 @@ void FileService::findFile(QByteArray data)
 
     // check file existance
     // if file is here -- send the response
-    QFileInfo info(fileName);
+    QFileInfo info(QString(SC_snd_dir)+QString(fileName));
     if (info.exists() && info.isReadable()){
         sendFileChunks(info, requesters);
     } else {
         // else form a fail package
        emit fileResp(nullptr, QList<int>());
     }
+}
+
+void FileService::updateFile(QByteArray data)
+{
+    QDataStream in(&data, QIODevice::ReadOnly);
+    int namesz;
+    in >> namesz;
+    char * name = new char(namesz);
+    in.readRawData(name, namesz);
+    int chunksz;
+    in >> chunksz;
+    char * chunk = new char(chunksz);
+    in.readRawData(chunk, chunksz);
+
+    QString fpath = QString::fromUtf8(SC_rcv_dir, 17);
+    fpath += QString::fromUtf8(name, namesz);
+    QFile file(fpath);
+
+    if(QFileInfo(fpath).exists()){
+        file.open(QIODevice::Append);
+    } else {
+        file.open(QIODevice::WriteOnly);
+    }
+    file.write(chunk, chunksz);
+    file.close();
+
+//    delete name;
+//    delete chunk;
+
 }
 
 bool FileService::insertFile(SharedFile file)
@@ -104,7 +135,7 @@ void FileService::sendFileChunks(QFileInfo info, QList<int> requesters)
     out.writeRawData(info.path().toUtf8().constData(), info.path().size());
     out << info.lastModified().toMSecsSinceEpoch();
 
-    QFile *subjFile = new QFile(info.path());
+    QFile *subjFile = new QFile(info.filePath());
     emit fileResp(subjFile, requesters);
 }
 

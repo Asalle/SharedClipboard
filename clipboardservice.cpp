@@ -39,8 +39,9 @@ void ClipboardService::getClipboardData()
         QDataStream out(&temp, QIODevice::WriteOnly);
         out << tempUrlList.size();
         for (QUrl item : tempUrlList){
-            out << QFileInfo(item.path()).baseName().size();
-            out.writeRawData(QFileInfo(item.path()).baseName().toUtf8().constData(), item.path().size());
+            out << QFileInfo(item.path()).fileName().size();
+            out.writeRawData(QFileInfo(item.path()).fileName().toUtf8().constData(),
+                             QFileInfo(item.path()).fileName().size());
             out << QFileInfo(item.path()).lastModified().toMSecsSinceEpoch();
 
             QNetworkInterface info;
@@ -49,7 +50,7 @@ void ClipboardService::getClipboardData()
                 out << adress.toIPv4Address();
             }
 
-            qDebug() << item.path();
+            qDebug() << QFileInfo(item.path()).fileName();
             qDebug() << QFileInfo(item.path()).lastModified().toString();
         }
         emit clipboardChanged(packageType, temp);
